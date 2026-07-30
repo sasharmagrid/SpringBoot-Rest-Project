@@ -20,24 +20,6 @@ public class URLShortener {
     public Map<String, String> shorten(@RequestBody Map<String, String> body) {
         String longUrl = body.get("url");
 
-// TODO: classname should be URLShortenerController 
-
-// you should follow a rest API/ like urlsShorten, post request
-
-// Use H2 database repository to store the data
-
-// Use Service Layers, repository layers returns response as entity, service return dto, controller return response entity
-
-// controller call service, service call repository, repository call database
-
-// store urls in database
-
-// what database fits better
-
-// all logs should be in service layer only
-
-// (POST)api/urls ---- (GET)/get/api/urls/{code}
-
         long num = counter.getAndIncrement();
         String shortCode = makeCode(num);
 
