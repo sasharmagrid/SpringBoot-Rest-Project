@@ -1,12 +1,18 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.ShortenUrlResponse;
+import com.example.demo.entity.UrlEntity;
 import com.example.demo.repository.UrlRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class URLShortenerService {
 
+    private static final Logger log = LoggerFactory.getLogger(URLShortenerService.class);
     private static final String BASE62_CHARS = "abcdefghijklmnopqrstuvwxyz";
 
     private final UrlRepository urlRepository;
@@ -16,6 +22,18 @@ public class URLShortenerService {
 
     public URLShortenerService(UrlRepository urlRepository) {
         this.urlRepository = urlRepository;
+    }
+
+    @Transactional
+    public ShortenUrlResponse shortenUrl(String url) {
+
+        UrlEntity entity = urlRepository.saveAndFlush(new UrlEntity(null, url.trim()));
+        String code = makeCode(entity.getId());
+        entity.setCode(code);
+        urlRepository.save(entity);
+
+        String shortUrl = baseUrl + "/api/urls/" + code;
+        return new ShortenUrlResponse(code, shortUrl);
     }
 
     private String makeCode(long num) {
