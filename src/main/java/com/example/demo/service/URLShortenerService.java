@@ -36,6 +36,18 @@ public class URLShortenerService {
         return new ShortenUrlResponse(code, shortUrl);
     }
 
+    @Transactional(readOnly = true)
+    public String resolveOriginalUrl(String code) {
+
+        UrlEntity entity = urlRepository.findByCode(code)
+                .orElseThrow(() -> {
+                    log.warn("Short code '{}' not found", code);
+                    return new RuntimeException("Short code not found");
+                });
+                
+        return entity.getOriginalUrl();
+    }
+
     private String makeCode(long num) {
         StringBuilder sb = new StringBuilder();
 
